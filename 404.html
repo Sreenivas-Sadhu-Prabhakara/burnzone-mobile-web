@@ -1,0 +1,2216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BurnZone">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>BurnZone Mobile</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0b0c;
+      --surface: #141416;
+      --surface-2: #1b1c20;
+      --surface-3: #23242a;
+      --line: #30323a;
+      --text: #f7f7f4;
+      --muted: #a9abb6;
+      --soft: #747783;
+      --primary: #ff2f00;
+      --primary-2: #ff8a00;
+      --green: #33d69f;
+      --blue: #66a6ff;
+      --teal: #4bd7d0;
+      --yellow: #f6c84c;
+      --danger: #ff5b6e;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(120deg, rgba(255, 90, 31, 0.08), transparent 26rem),
+        radial-gradient(circle at 80% 0%, rgba(75, 215, 208, 0.10), transparent 24rem),
+        var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .app {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      background: var(--bg);
+      border-left: 1px solid rgba(255, 255, 255, 0.06);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app.auth-mode .header,
+    .app.auth-mode .nav {
+      display: none;
+    }
+
+    .app.auth-mode .screen {
+      height: 100vh;
+      padding: 0;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: calc(14px + env(safe-area-inset-top)) 18px 12px;
+      background: rgba(11, 11, 12, 0.94);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(18px);
+    }
+
+    .header-row,
+    .brand,
+    .branch-pill,
+    .header-actions,
+    .quick-row,
+    .split-row,
+    .meta-row,
+    .inline-row,
+    .nav,
+    .tab-button,
+    .list-item,
+    .slot,
+    .challenge-row,
+    .meal-row,
+    .settings-row {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-row {
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      min-width: 0;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #050505;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .tenant {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .icon-button.primary {
+      background: var(--primary);
+      color: #090909;
+      border-color: var(--primary);
+    }
+
+    .screen {
+      height: calc(100vh - 72px);
+      overflow-y: auto;
+      padding: 16px 16px calc(92px + env(safe-area-inset-bottom));
+      scroll-behavior: smooth;
+    }
+
+    .screen::-webkit-scrollbar {
+      width: 0;
+    }
+
+    .auth-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .auth-visual {
+      min-height: 44vh;
+      padding: calc(28px + env(safe-area-inset-top)) 22px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(180deg, rgba(11, 11, 12, 0.08), rgba(11, 11, 12, 0.92)),
+        var(--auth-image) center / cover;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .auth-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #050505;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .auth-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .auth-brand-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .auth-brand-subtitle {
+      margin: 5px 0 0;
+      color: rgba(247, 247, 244, 0.76);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .auth-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .auth-badge {
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.46);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 900;
+      backdrop-filter: blur(8px);
+    }
+
+    .auth-panel {
+      flex: 1;
+      padding: 24px 20px calc(22px + env(safe-area-inset-bottom));
+      background: var(--bg);
+    }
+
+    .auth-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.03;
+      font-weight: 950;
+    }
+
+    .auth-copy {
+      margin: 10px 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .auth-buttons {
+      display: grid;
+      gap: 11px;
+    }
+
+    .social-button {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 999px;
+      display: grid;
+      grid-template-columns: 36px 1fr 36px;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #f7f7f4;
+      color: #111214;
+      font-size: 14px;
+      font-weight: 950;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .social-button.facebook {
+      background: #1877f2;
+      color: #fff;
+      border-color: #1877f2;
+    }
+
+    .social-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 0, 0, 0.08);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .facebook .social-mark {
+      background: rgba(255, 255, 255, 0.16);
+      font-family: Arial, sans-serif;
+      font-size: 22px;
+    }
+
+    .social-arrow {
+      color: currentColor;
+      opacity: 0.62;
+      font-weight: 950;
+    }
+
+    .auth-divider {
+      margin: 18px 0 14px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      height: 1px;
+      background: var(--line);
+    }
+
+    .auth-preview {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .auth-footnote {
+      margin: 16px 0 0;
+      color: var(--soft);
+      font-size: 11px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .auth-notice {
+      margin: 0 0 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(246, 95, 24, 0.28);
+      border-radius: 8px;
+      background: rgba(246, 95, 24, 0.08);
+      color: #6f2412;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100%, 430px);
+      z-index: 25;
+      gap: 4px;
+      padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(11, 11, 12, 0.96);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .tab-button {
+      flex: 1;
+      min-width: 0;
+      height: 58px;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .tab-button[aria-selected="true"] {
+      color: var(--text);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+    }
+
+    .tab-icon {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.06);
+      color: currentColor;
+      font-size: 11px;
+      font-weight: 950;
+    }
+
+    .tab-button[aria-selected="true"] .tab-icon {
+      background: var(--primary);
+      color: #090909;
+    }
+
+    .section {
+      margin-bottom: 22px;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--primary-2);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .panel,
+    .card,
+    .media-card,
+    .sheet-panel {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .hero-panel {
+      min-height: 238px;
+      background:
+        linear-gradient(180deg, rgba(10, 10, 10, 0.05), rgba(10, 10, 10, 0.92)),
+        var(--hero-image) center / cover;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .branch-pill {
+      gap: 7px;
+      width: max-content;
+      max-width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.50);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 850;
+      backdrop-filter: blur(8px);
+    }
+
+    .score {
+      width: 76px;
+      height: 76px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--primary) calc(var(--value) * 1%), rgba(255, 255, 255, 0.12) 0),
+        rgba(0, 0, 0, 0.46);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      position: relative;
+    }
+
+    .score::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border-radius: inherit;
+      background: rgba(0, 0, 0, 0.74);
+    }
+
+    .score span {
+      position: relative;
+      z-index: 1;
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.02;
+      font-weight: 950;
+    }
+
+    .hero-copy {
+      margin: 8px 0 0;
+      color: #d9d9d2;
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 320px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .metric {
+      min-height: 78px;
+      padding: 11px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+
+    .metric-label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 7px;
+      font-size: 21px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .metric-sub {
+      display: block;
+      margin-top: 5px;
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .quick-row {
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .quick-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip,
+    .action-button,
+    .ghost-button,
+    .pill-button,
+    .danger-button {
+      min-height: 40px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .chip {
+      padding: 0 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: #090909;
+      border-color: var(--primary);
+    }
+
+    .action-button {
+      min-width: 112px;
+      padding: 0 16px;
+      background: var(--primary);
+      color: #090909;
+      font-size: 13px;
+    }
+
+    .ghost-button {
+      padding: 0 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .danger-button {
+      padding: 0 14px;
+      background: rgba(255, 91, 110, 0.12);
+      border: 1px solid rgba(255, 91, 110, 0.35);
+      color: var(--danger);
+      font-size: 13px;
+    }
+
+    .split-row {
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .meta-row {
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: inline-block;
+    }
+
+    .progress {
+      width: 100%;
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: var(--width);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      min-height: 68px;
+      gap: 12px;
+      padding: 12px;
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+    }
+
+    .item-media {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      flex: 0 0 auto;
+      background: var(--surface-3);
+    }
+
+    .item-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .item-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .item-copy {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status-badge {
+      padding: 6px 8px;
+      border-radius: 999px;
+      color: #090909;
+      background: var(--green);
+      font-size: 11px;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    .status-badge.warn {
+      background: var(--yellow);
+    }
+
+    .status-badge.lock {
+      background: var(--surface-3);
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .media-scroller {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 78%;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+
+    .media-scroller::-webkit-scrollbar {
+      display: none;
+    }
+
+    .media-card {
+      scroll-snap-align: start;
+      overflow: hidden;
+      min-height: 246px;
+    }
+
+    .media-card img {
+      width: 100%;
+      height: 138px;
+      object-fit: cover;
+      background: var(--surface-3);
+    }
+
+    .media-content {
+      padding: 13px;
+    }
+
+    .media-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 950;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .search {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      outline: 0;
+      padding: 0 14px;
+    }
+
+    .calendar-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .date-cell {
+      min-height: 70px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--muted);
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      padding: 8px 2px;
+      font-weight: 900;
+    }
+
+    .date-cell.active {
+      color: #090909;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .date-cell small {
+      display: block;
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .slot {
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 62px;
+      padding: 12px;
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+    }
+
+    .slot strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .slot span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .macro-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .macro {
+      min-height: 68px;
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .macro b {
+      display: block;
+      font-size: 16px;
+    }
+
+    .macro span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .meal-row {
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 56px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 12px 0;
+    }
+
+    .meal-row:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .meal-row:last-child {
+      padding-bottom: 0;
+    }
+
+    .meal-row strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .meal-row span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .leaderboard {
+      display: grid;
+      gap: 8px;
+    }
+
+    .challenge-row {
+      min-height: 58px;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .rank {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+    }
+
+    .rank.me {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #090909;
+    }
+
+    .chat {
+      display: grid;
+      gap: 10px;
+    }
+
+    .bubble {
+      width: fit-content;
+      max-width: 82%;
+      padding: 12px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .bubble.me {
+      justify-self: end;
+      background: var(--primary);
+      color: #090909;
+      border-color: var(--primary);
+      font-weight: 800;
+    }
+
+    .chat-composer {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chat-composer input {
+      min-height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 0 14px;
+      outline: 0;
+    }
+
+    .map-panel {
+      height: 214px;
+      overflow: hidden;
+      position: relative;
+      background:
+        linear-gradient(0deg, rgba(11, 11, 12, 0.42), rgba(11, 11, 12, 0.42)),
+        repeating-linear-gradient(35deg, #202127 0 3px, #17181d 3px 18px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+    }
+
+    .map-line {
+      position: absolute;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.20);
+      transform-origin: left center;
+    }
+
+    .pin {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--surface);
+      border: 2px solid var(--primary);
+      font-weight: 950;
+      box-shadow: var(--shadow);
+    }
+
+    .pin.active {
+      background: var(--primary);
+      color: #090909;
+    }
+
+    .settings-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .settings-row {
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 72px;
+      padding: 13px;
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+    }
+
+    .settings-row strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .settings-row span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .location-card {
+      min-height: 188px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .location-card img {
+      width: 100%;
+      height: 112px;
+      object-fit: cover;
+    }
+
+    .location-body {
+      padding: 12px;
+    }
+
+    .location-body h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 950;
+    }
+
+    .quote {
+      padding: 15px;
+      border-left: 3px solid var(--primary);
+      background: rgba(255, 47, 0, 0.08);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 750;
+    }
+
+    .sheet {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.58);
+      padding: 16px;
+    }
+
+    .sheet.open {
+      display: flex;
+    }
+
+    .sheet-panel {
+      width: min(100%, 430px);
+      padding: 16px;
+    }
+
+    .sheet-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 950;
+    }
+
+    .sheet-copy {
+      margin: 9px 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .empty {
+      min-height: 132px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    @media (min-width: 860px) {
+      body {
+        padding: 28px 0;
+        align-items: flex-start;
+      }
+
+      .app {
+        min-height: calc(100vh - 56px);
+        max-height: calc(100vh - 56px);
+        border-radius: 22px;
+      }
+
+      .screen {
+        height: calc(100vh - 128px);
+      }
+
+      .nav {
+        bottom: 28px;
+        border-bottom-left-radius: 22px;
+        border-bottom-right-radius: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-row">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"><img src="https://static.wixstatic.com/media/e9636b_9566858f2e1246a292c542c6c5f3ed1c%7Emv2.png/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/e9636b_9566858f2e1246a292c542c6c5f3ed1c%7Emv2.png" alt=""></div>
+          <div>
+            <h1 class="brand-name">BurnZone</h1>
+            <p class="tenant" id="tenantLine">BurnZone Fitness</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="icon-button" type="button" data-action="switch-branch" aria-label="Switch branch">BR</button>
+          <button class="icon-button primary" type="button" data-action="open-buddy" aria-label="Open buddy">AI</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="screen" id="screen" tabindex="-1"></main>
+
+    <nav class="nav" aria-label="Primary">
+      <button class="tab-button" type="button" data-tab="home" aria-selected="true"><span class="tab-icon">H</span><span>Home</span></button>
+      <button class="tab-button" type="button" data-tab="train" aria-selected="false"><span class="tab-icon">T</span><span>Train</span></button>
+      <button class="tab-button" type="button" data-tab="eat" aria-selected="false"><span class="tab-icon">E</span><span>Eat</span></button>
+      <button class="tab-button" type="button" data-tab="book" aria-selected="false"><span class="tab-icon">B</span><span>Book</span></button>
+      <button class="tab-button" type="button" data-tab="social" aria-selected="false"><span class="tab-icon">S</span><span>Social</span></button>
+      <button class="tab-button" type="button" data-tab="more" aria-selected="false"><span class="tab-icon">M</span><span>More</span></button>
+    </nav>
+  </div>
+
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-panel">
+      <div class="split-row">
+        <h2 class="sheet-title" id="sheetTitle"></h2>
+        <button class="icon-button" type="button" data-action="close-sheet" aria-label="Close">X</button>
+      </div>
+      <div id="sheetBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const storageKey = "burnzone-mobile-v1";
+    const images = {
+      hero: "https://static.wixstatic.com/media/e9636b_87441b1cd46b4b55ab2411b877defce6~mv2.png/v1/fill/w_1648,h_1124,q_90,enc_avif,quality_auto/e9636b_87441b1cd46b4b55ab2411b877defce6~mv2.png",
+      strength: "https://static.wixstatic.com/media/e9636b_db575e174a3b4e4b9d6fa8c4efed3151~mv2.jpeg/v1/fill/w_990,h_744,q_90,enc_avif,quality_auto/e9636b_db575e174a3b4e4b9d6fa8c4efed3151~mv2.jpeg",
+      hiit: "https://static.wixstatic.com/media/e9636b_3fdfbd44c9fb410cbe4abcda315b2745~mv2.jpeg/v1/fill/w_990,h_741,q_90,enc_avif,quality_auto/e9636b_3fdfbd44c9fb410cbe4abcda315b2745~mv2.jpeg",
+      yoga: "https://static.wixstatic.com/media/e9636b_65fed92f4d8548b4a660320627a50f57~mv2.jpeg/v1/fill/w_808,h_606,q_90,enc_avif,quality_auto/e9636b_65fed92f4d8548b4a660320627a50f57~mv2.jpeg",
+      trainerMallesh: "https://static.wixstatic.com/media/e9636b_46913b921c3f4ab4b6d45a48041b248a~mv2.jpeg/v1/fill/w_432,h_576,q_90,enc_avif,quality_auto/e9636b_46913b921c3f4ab4b6d45a48041b248a~mv2.jpeg",
+      trainerSreenivas: "https://static.wixstatic.com/media/e9636b_f7eb8ef25b334cc394ddb0574c60988f~mv2.jpeg/v1/fill/w_765,h_576,q_90,enc_avif,quality_auto/e9636b_f7eb8ef25b334cc394ddb0574c60988f~mv2.jpeg",
+      meal: "https://static.wixstatic.com/media/e9636b_65105cee8c974a559b0965ff45f7232b~mv2.jpeg/v1/fill/w_858,h_642,q_90,enc_avif,quality_auto/e9636b_65105cee8c974a559b0965ff45f7232b~mv2.jpeg",
+      product: "https://static.wixstatic.com/media/e9636b_2a39199c47f54948bd5fefe4e934b030~mv2.jpg/v1/fill/w_990,h_744,q_90,enc_avif,quality_auto/e9636b_2a39199c47f54948bd5fefe4e934b030~mv2.jpg"
+    };
+
+    const locations = [
+      {
+        name: "Malleshwaram",
+        short: "ML",
+        address: "No 5/1, 13th Cross, 8th Main Rd, Malleshwara, Bengaluru 560003, Karnataka",
+        phone: "+91 93800 59796",
+        image: images.strength
+      },
+      {
+        name: "Rajajinagar",
+        short: "RJ",
+        address: "No. 431, 1st Main Road, 1st N Block, Dr Rajkumar Road, Rajajinagar, Bangalore-560010, Karnataka",
+        phone: "+91 8088210247",
+        image: images.hiit
+      }
+    ];
+
+    const seed = {
+      authenticated: false,
+      authProvider: null,
+      authName: null,
+      authNotice: null,
+      tab: "home",
+      branch: "Rajajinagar",
+      tenant: "BurnZone Fitness",
+      plan: "Free",
+      burn: 750,
+      burnGoal: 900,
+      calories: 1500,
+      targetCalories: 2300,
+      protein: 110,
+      carbs: 180,
+      fats: 45,
+      streak: 12,
+      workoutsDone: [1, 3],
+      joinedChallenge: false,
+      wearableConnected: false,
+      apiEnabled: false,
+      selectedDate: 2,
+      bookedSlot: null,
+      photoCredits: 2,
+      meals: [
+        { type: "Breakfast", name: "South Indian protein plate", calories: 430, source: "manual" },
+        { type: "Lunch", name: "BurnZone chicken rice", calories: 720, source: "marketplace" },
+        { type: "Snack", name: "Post-class protein shake", calories: 350, source: "manual" }
+      ],
+      chat: [
+        { from: "buddy", text: "Your BurnZone streak is alive. Book a class or log protein after training." },
+        { from: "me", text: "Show me the next Rajajinagar slot." }
+      ]
+    };
+
+    let state = loadState();
+    const apiBase = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "" : "";
+    hydrateOAuthReturn();
+    if (state.tenant !== seed.tenant) {
+      state.tenant = seed.tenant;
+      saveState();
+    }
+    if (!locations.some((location) => location.name === state.branch)) {
+      state.branch = seed.branch;
+      saveState();
+    }
+
+    const workouts = [
+      { id: 1, name: "General Training", meta: "45 min - 320 kcal - Strength and conditioning", image: images.strength, tag: "Service" },
+      { id: 2, name: "Group Sessions", meta: "50 min - 420 kcal - BurnZone community class", image: images.hiit, tag: "Class" },
+      { id: 3, name: "60-day Transformation", meta: "Program - consult, train, track, repeat", image: images.yoga, tag: "Program" }
+    ];
+
+    const slots = [
+      { id: "slot-1", time: "07:30", trainer: "Mallesh", branch: "Malleshwaram", focus: "General Training" },
+      { id: "slot-2", time: "12:00", trainer: "Sowmya", branch: "Rajajinagar", focus: "Yoga and holistic coaching" },
+      { id: "slot-3", time: "18:30", trainer: "Sreenivas", branch: "Rajajinagar", focus: "Runner strength session" }
+    ];
+
+    const leaders = [
+      { name: "Sarah J.", score: 8420 },
+      { name: "Malleshwaram Team", score: 8110 },
+      { name: "You", score: 7950 },
+      { name: "Rajajinagar Team", score: 7680 }
+    ];
+
+    function currentLocation() {
+      return locations.find((location) => location.name === state.branch) || locations[1];
+    }
+
+    function loadState() {
+      try {
+        return { ...seed, ...(JSON.parse(localStorage.getItem(storageKey)) || {}) };
+      } catch (error) {
+        return { ...seed };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function apiPath(path) {
+      return `${apiBase}${path}`;
+    }
+
+    function providerLabel(provider) {
+      if (provider === "facebook") return "Facebook";
+      if (provider === "google") return "Google";
+      return "Social";
+    }
+
+    function hydrateOAuthReturn() {
+      const search = new URLSearchParams(window.location.search);
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const provider = search.get("provider") || hash.get("provider");
+      const auth = search.get("auth") || hash.get("auth");
+
+      if (auth === "success") {
+        state.authenticated = true;
+        state.authProvider = provider || "social";
+        state.authName = provider ? `${provider.charAt(0).toUpperCase()}${provider.slice(1)} member` : "BurnZone member";
+        state.authNotice = null;
+        saveState();
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      if (auth === "error") {
+        state.authenticated = false;
+        state.authProvider = null;
+        state.authName = null;
+        state.authNotice = `${providerLabel(provider)} sign-in could not be completed. Try again or preview the app.`;
+        saveState();
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
+    function kcalLeft() {
+      return state.targetCalories - state.calories;
+    }
+
+    function burnPercent() {
+      return Math.min(100, Math.round((state.burn / state.burnGoal) * 100));
+    }
+
+    function caloriePercent() {
+      return Math.min(100, Math.round((state.calories / state.targetCalories) * 100));
+    }
+
+    function setTab(tab) {
+      state.tab = tab;
+      saveState();
+      render();
+      document.getElementById("screen").scrollTop = 0;
+    }
+
+    function pill(text, tone) {
+      return `<span class="status-badge ${tone || ""}">${text}</span>`;
+    }
+
+    function renderHeader() {
+      const location = currentLocation();
+      document.getElementById("tenantLine").textContent = `${state.tenant} - ${location.name}`;
+      document.querySelectorAll(".tab-button").forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.tab === state.tab));
+      });
+    }
+
+    function render() {
+      document.querySelector(".app").classList.toggle("auth-mode", !state.authenticated);
+      const screen = document.getElementById("screen");
+
+      if (!state.authenticated) {
+        screen.innerHTML = viewAuth();
+        bindScreen();
+        return;
+      }
+
+      renderHeader();
+      const views = {
+        home: viewHome,
+        train: viewTrain,
+        eat: viewEat,
+        book: viewBook,
+        social: viewSocial,
+        more: viewMore
+      };
+      screen.innerHTML = views[state.tab]();
+      bindScreen();
+    }
+
+    function viewAuth() {
+      return `
+        <section class="auth-screen">
+          <div class="auth-visual" style="--auth-image:url('${images.hero}')">
+            <div class="auth-brand">
+              <div class="auth-mark" aria-hidden="true"><img src="https://static.wixstatic.com/media/e9636b_9566858f2e1246a292c542c6c5f3ed1c%7Emv2.png/v1/fill/w_180%2Ch_180%2Clg_1%2Cusm_0.66_1.00_0.01/e9636b_9566858f2e1246a292c542c6c5f3ed1c%7Emv2.png" alt=""></div>
+              <div>
+                <h1 class="auth-brand-title">BurnZone</h1>
+                <p class="auth-brand-subtitle">Malleshwaram + Rajajinagar</p>
+              </div>
+            </div>
+            <div class="auth-badges">
+              <span class="auth-badge">Training</span>
+              <span class="auth-badge">Nutrition</span>
+              <span class="auth-badge">Coach AI</span>
+            </div>
+          </div>
+          <div class="auth-panel">
+            <p class="eyebrow">Welcome back</p>
+            <h2 class="auth-title">Sign in to train, track, and transform.</h2>
+            <p class="auth-copy">Use your social account for a faster BurnZone check-in across bookings, nutrition, challenges, and wearable sync.</p>
+            ${state.authNotice ? `<p class="auth-notice">${state.authNotice}</p>` : ""}
+            <div class="auth-buttons">
+              <button class="social-button google" type="button" data-action="oauth-login" data-provider="google">
+                <span class="social-mark">G</span>
+                <span>Continue with Google</span>
+                <span class="social-arrow">></span>
+              </button>
+              <button class="social-button facebook" type="button" data-action="oauth-login" data-provider="facebook">
+                <span class="social-mark">f</span>
+                <span>Continue with Facebook</span>
+                <span class="social-arrow">></span>
+              </button>
+            </div>
+            <div class="auth-divider">or</div>
+            <button class="auth-preview" type="button" data-action="demo-login">Preview BurnZone demo</button>
+            <p class="auth-footnote">By continuing, you agree to BurnZone account access for your profile, bookings, progress, and app preferences.</p>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewHome() {
+      const location = currentLocation();
+      return `
+        <section class="section hero-panel" style="--hero-image:url('${images.hero}')">
+          <div class="hero-top">
+            <button class="branch-pill" type="button" data-action="switch-branch"><span class="dot"></span>${location.name}</button>
+            <div class="score" style="--value:${burnPercent()}"><span>${burnPercent()}%</span></div>
+          </div>
+          <div>
+            <p class="eyebrow">Best gym in Bengaluru</p>
+            <h2 class="hero-title">Unleash your inner fire.</h2>
+            <p class="hero-copy">${Math.max(0, state.burnGoal - state.burn)} kcal to close your burn goal at ${location.name}. ${kcalLeft()} kcal left in your nutrition budget.</p>
+          </div>
+        </section>
+
+        <section class="section metric-grid">
+          <div class="metric"><span class="metric-label">Burn</span><span class="metric-value">${state.burn}</span><span class="metric-sub">${state.burnGoal} goal</span></div>
+          <div class="metric"><span class="metric-label">Intake</span><span class="metric-value">${state.calories}</span><span class="metric-sub">${state.targetCalories} target</span></div>
+          <div class="metric"><span class="metric-label">Streak</span><span class="metric-value">${state.streak}</span><span class="metric-sub">days</span></div>
+        </section>
+
+        <section class="section panel">
+          <div class="split-row">
+            <div>
+              <p class="eyebrow">Buddy nudge</p>
+              <h3 class="section-title">Protein is trailing</h3>
+            </div>
+            ${state.plan === "Free" ? pill("Free", "lock") : pill("Pro")}
+          </div>
+          <p class="item-copy">Add 30g protein after your next session to keep the recovery plan on track.</p>
+          <div class="quick-row" style="margin-top:14px">
+            <button class="action-button" type="button" data-action="quick-meal" data-name="Recovery shake" data-calories="240" data-protein="32">Log shake</button>
+            <button class="ghost-button" type="button" data-action="open-buddy">Ask AI</button>
+            <button class="ghost-button" type="button" data-tab-jump="book">Book trainer</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3 class="section-title">Daily checklist</h3>
+          <div class="list">
+            ${checkItem("Train session", state.workoutsDone.length >= 2, "Upper Power or Zone 2 Builder")}
+            ${checkItem("Nutrition log", state.meals.length >= 3, `${state.meals.length} entries today`)}
+            ${checkItem("Trainer touchpoint", Boolean(state.bookedSlot), state.bookedSlot ? "Session booked" : "Open slots today")}
+            ${checkItem("Sync data", state.wearableConnected, state.wearableConnected ? "Wearable linked" : "Connect Apple Health or Garmin")}
+          </div>
+        </section>
+
+        <section class="section">
+          <h3 class="section-title">BurnZone locations</h3>
+          <div class="media-scroller">
+            ${locations.map((location) => locationCard(location)).join("")}
+          </div>
+        </section>
+
+        <section class="section quote">
+          How will you struggle with the mind unless the physique be strong? <br><strong>- Swami Vivekananda</strong>
+        </section>
+      `;
+    }
+
+    function locationCard(location) {
+      return `
+        <article class="location-card">
+          <img src="${location.image}" alt="BurnZone ${location.name}" loading="lazy">
+          <div class="location-body">
+            <div class="split-row">
+              <h3>${location.name}</h3>
+              ${pill(location.short)}
+            </div>
+            <p class="item-copy">${location.address}</p>
+            <p class="item-copy">${location.phone}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function checkItem(title, done, copy) {
+      return `
+        <div class="list-item">
+          <div class="rank ${done ? "me" : ""}">${done ? "OK" : "--"}</div>
+          <div class="item-main">
+            <h4 class="item-title">${title}</h4>
+            <p class="item-copy">${copy}</p>
+          </div>
+          ${done ? pill("Done") : pill("Open", "warn")}
+        </div>
+      `;
+    }
+
+    function viewTrain() {
+      return `
+        <section class="section">
+          <div class="filter-row">
+            <input class="search" aria-label="Search workouts" placeholder="Search workouts" data-action="filter-workouts">
+            <button class="icon-button primary" type="button" data-action="playlist">+</button>
+          </div>
+          <div class="quick-row">
+            <button class="chip active" type="button">All</button>
+            <button class="chip" type="button">Strength</button>
+            <button class="chip" type="button">Group</button>
+            <button class="chip" type="button">1-on-1</button>
+            <button class="chip" type="button">Athlete</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">My routine</h2>
+          <div class="media-scroller">
+            ${workouts.map((workout) => `
+              <article class="media-card">
+                <img src="${workout.image}" alt="${workout.name}" loading="lazy">
+                <div class="media-content">
+                  <div class="split-row">
+                    <h3 class="media-title">${workout.name}</h3>
+                    ${state.workoutsDone.includes(workout.id) ? pill("Done") : pill(workout.tag, "warn")}
+                  </div>
+                  <p class="item-copy">${workout.meta}</p>
+                  <div class="quick-row" style="margin-top:12px">
+                    <button class="action-button" type="button" data-action="toggle-workout" data-id="${workout.id}">${state.workoutsDone.includes(workout.id) ? "Undo" : "Start"}</button>
+                    <button class="ghost-button" type="button" data-action="details" data-title="${workout.name}">Details</button>
+                  </div>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Program builder</h2>
+          <div class="list">
+            <div class="list-item">
+              <div class="rank">01</div>
+              <div class="item-main"><h3 class="item-title">60-day Transformation</h3><p class="item-copy">General training, group sessions, and nutrition check-ins</p></div>
+              ${pill("Admin")}
+            </div>
+            <div class="list-item">
+              <div class="rank">02</div>
+              <div class="item-main"><h3 class="item-title">Pro Athlete Help</h3><p class="item-copy">Technique-focused strength support from BurnZone coaches</p></div>
+              ${pill("Pending", "warn")}
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Meet the team</h2>
+          <div class="list">
+            <div class="list-item"><img class="item-media" src="${images.trainerMallesh}" alt="Mallesh" loading="lazy"><div class="item-main"><h3 class="item-title">Mallesh</h3><p class="item-copy">Bodybuilding champion and client-focused coach.</p></div>${pill("Coach")}</div>
+            <div class="list-item"><img class="item-media" src="${images.trainerSreenivas}" alt="Sreenivas" loading="lazy"><div class="item-main"><h3 class="item-title">Sreenivas</h3><p class="item-copy">Runner, strength mentor, and endurance guide.</p></div>${pill("Runner")}</div>
+            <div class="list-item"><div class="rank">SY</div><div class="item-main"><h3 class="item-title">Sowmya</h3><p class="item-copy">Yoga-rooted coach for holistic strength and clarity.</p></div>${pill("Yoga")}</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewEat() {
+      const left = kcalLeft();
+      return `
+        <section class="section panel">
+          <div class="split-row">
+            <div>
+              <p class="eyebrow">Calorie budget</p>
+              <h2 class="section-title">${left} kcal left</h2>
+            </div>
+            <button class="icon-button primary" type="button" data-action="scan-food" aria-label="Scan food">AI</button>
+          </div>
+          <div class="progress" aria-label="Calorie progress"><span style="--width:${caloriePercent()}%"></span></div>
+          <div class="meta-row">
+            <span>${state.calories} eaten</span>
+            <span>${state.targetCalories} target</span>
+            <span>${state.photoCredits} photo scans</span>
+          </div>
+        </section>
+
+        <section class="section macro-grid">
+          <div class="macro"><b>${state.protein}g</b><span>Protein</span></div>
+          <div class="macro"><b>${state.carbs}g</b><span>Carbs</span></div>
+          <div class="macro"><b>${state.fats}g</b><span>Fats</span></div>
+          <div class="macro"><b>${state.streak}</b><span>Streak</span></div>
+        </section>
+
+        <section class="section">
+          <div class="quick-row">
+            <button class="action-button" type="button" data-action="quick-meal" data-name="Manual meal" data-calories="450" data-protein="26">Log meal</button>
+            <button class="ghost-button" type="button" data-action="scan-food">Photo scan</button>
+            <button class="ghost-button" type="button" data-action="market-meal">Kitchen meal</button>
+          </div>
+        </section>
+
+        <section class="section panel">
+          <div class="split-row">
+            <h2 class="section-title">Today</h2>
+            ${pill(state.calories <= state.targetCalories ? "On budget" : "Over", state.calories <= state.targetCalories ? "" : "warn")}
+          </div>
+          <div>
+            ${state.meals.map((meal, index) => `
+              <div class="meal-row">
+                <div>
+                  <strong>${meal.name}</strong>
+                  <span>${meal.type} - ${meal.source}</span>
+                </div>
+                <button class="ghost-button" type="button" data-action="remove-meal" data-index="${index}">${meal.calories}</button>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Weight trend</h2>
+          <div class="list">
+            <div class="list-item"><div class="rank">84</div><div class="item-main"><h3 class="item-title">Current weight</h3><p class="item-copy">Target 78 kg - projected 11 weeks</p></div>${pill("Active")}</div>
+            <div class="list-item"><div class="rank">-2</div><div class="item-main"><h3 class="item-title">Monthly change</h3><p class="item-copy">Manual logs and nutrition summary aligned</p></div>${pill("Good")}</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewBook() {
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+      const location = currentLocation();
+      return `
+        <section class="section panel">
+          <div class="split-row">
+            <div>
+              <p class="eyebrow">Trainer booking</p>
+              <h2 class="section-title">${state.bookedSlot ? "Session confirmed" : "Select a slot"}</h2>
+            </div>
+            ${state.bookedSlot ? pill("Booked") : pill("Open", "warn")}
+          </div>
+          <div class="calendar-strip">
+            ${days.map((day, index) => `<button class="date-cell ${state.selectedDate === index ? "active" : ""}" type="button" data-action="select-date" data-index="${index}"><small>${day}</small>${index + 12}</button>`).join("")}
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Available sessions</h2>
+          <div class="list">
+            ${slots.map((slot) => `
+              <div class="slot">
+                <div>
+                  <strong>${slot.time} - ${slot.trainer}</strong>
+                  <span>${slot.branch} - ${slot.focus}</span>
+                </div>
+                <button class="${state.bookedSlot === slot.id ? "danger-button" : "action-button"}" type="button" data-action="book-slot" data-id="${slot.id}">${state.bookedSlot === slot.id ? "Cancel" : "Book"}</button>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Branch access</h2>
+          <div class="map-panel">
+            <div class="map-line" style="left:18%;top:32%;width:240px;transform:rotate(24deg)"></div>
+            <div class="map-line" style="left:12%;top:72%;width:260px;transform:rotate(-18deg)"></div>
+            ${locations.map((branch, index) => `<button class="pin ${state.branch === branch.name ? "active" : ""}" style="left:${index === 0 ? 34 : 67}%;top:${index === 0 ? 42 : 62}%" type="button" data-action="set-branch" data-branch="${branch.name}">${branch.short}</button>`).join("")}
+          </div>
+        </section>
+
+        <section class="section panel">
+          <div class="split-row">
+            <div>
+              <p class="eyebrow">Selected branch</p>
+              <h2 class="section-title">${location.name}</h2>
+            </div>
+            ${pill(location.short)}
+          </div>
+          <p class="item-copy">${location.address}</p>
+          <p class="item-copy">${location.phone}</p>
+          <div class="quick-row" style="margin-top:14px">
+            <a class="action-button" href="tel:${location.phone.replace(/\s/g, "")}" style="text-decoration:none">Call branch</a>
+            <button class="ghost-button" type="button" data-action="switch-branch">Switch</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewSocial() {
+      return `
+        <section class="section panel">
+          <div class="split-row">
+            <div>
+              <p class="eyebrow">Active challenge</p>
+              <h2 class="section-title">May Inferno</h2>
+            </div>
+            ${state.joinedChallenge ? pill("Joined") : pill("Open", "warn")}
+          </div>
+          <p class="item-copy">Burn 10,000 kcal this month. Top members unlock a free trainer session and branded badge.</p>
+          <div class="progress" style="margin-top:14px"><span style="--width:79%"></span></div>
+          <div class="meta-row"><span>7,950 score</span><span>Rank 3</span><span>6 days left</span></div>
+          <div class="quick-row" style="margin-top:14px">
+            <button class="action-button" type="button" data-action="join-challenge">${state.joinedChallenge ? "Share card" : "Join"}</button>
+            <button class="ghost-button" type="button" data-action="details" data-title="Challenge rules">Rules</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Leaderboard</h2>
+          <div class="leaderboard">
+            ${leaders.map((leader, index) => `
+              <div class="challenge-row">
+                <div class="rank ${leader.name === "You" ? "me" : ""}">${index + 1}</div>
+                <div class="item-main"><h3 class="item-title">${leader.name}</h3><p class="item-copy">${leader.score.toLocaleString()} points</p></div>
+                ${leader.name === "You" ? pill("You") : pill("Live", "lock")}
+              </div>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="section panel">
+          <div class="split-row">
+            <h2 class="section-title">Achievements</h2>
+            ${pill("3 new", "warn")}
+          </div>
+          <div class="quick-row">
+            <button class="chip active" type="button">7 day streak</button>
+            <button class="chip" type="button">50 workouts</button>
+            <button class="chip" type="button">10 kg milestone</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewMore() {
+      return `
+        <section class="section panel">
+          <div class="split-row">
+            <div>
+              <p class="eyebrow">Subscription</p>
+              <h2 class="section-title">${state.plan} tier</h2>
+            </div>
+            ${state.plan === "Free" ? pill("Limited", "warn") : pill("Active")}
+          </div>
+          <p class="item-copy">Current limits: 3 bookings, 2 playlists, ${state.plan === "Free" ? "AI and wearables locked" : "AI, challenges, and wearables enabled"}.</p>
+          <div class="quick-row" style="margin-top:14px">
+            <button class="action-button" type="button" data-action="upgrade">${state.plan === "Free" ? "Upgrade" : "Manage"}</button>
+            <button class="ghost-button" type="button" data-action="export-data">Export data</button>
+          </div>
+        </section>
+
+        <section class="section settings-list">
+          ${settingsRow("Account", `${state.authName || "BurnZone member"} - ${state.authProvider === "demo" ? "demo preview" : `${state.authProvider || "social"} sign-in`}`, "Sign out", "sign-out")}
+          ${settingsRow("Wearable sync", state.wearableConnected ? "Apple Health connected - last sync 08:20" : "Apple Health, Health Connect, Garmin, Samsung", state.wearableConnected ? "Connected" : "Connect", "toggle-wearable")}
+          ${settingsRow("Marketplace", "Supplements and cloud kitchen meals with macro data", "Browse", "marketplace")}
+          ${settingsRow("External API", state.apiEnabled ? "Partner key active with scoped nutrition and booking access" : "Partner data sharing disabled", state.apiEnabled ? "Rotate" : "Enable", "toggle-api")}
+          ${settingsRow("Book FREE Class", "Lead form, branch callback, and BurnZone trainer assignment", "Open", "free-class")}
+          ${settingsRow("Tenant branding", "BurnZone red/orange theme, real branch data, and site images", "Admin", "tenant-settings")}
+        </section>
+
+        <section class="section">
+          <div class="split-row">
+            <h2 class="section-title">Phase engine</h2>
+            ${pill("Live")}
+          </div>
+          <div class="list">
+            <div class="list-item"><div class="rank">06</div><div class="item-main"><h3 class="item-title">Subscriptions</h3><p class="item-copy">Tier, quota, and feature checks across the app</p></div>${pill(state.plan)}</div>
+            <div class="list-item"><div class="rank">07</div><div class="item-main"><h3 class="item-title">AI nutrition</h3><p class="item-copy">Photo estimates, confidence review, and calorie-log confirmation</p></div>${pill(state.plan === "Free" ? "Locked" : "Ready", state.plan === "Free" ? "warn" : "")}</div>
+            <div class="list-item"><div class="rank">08</div><div class="item-main"><h3 class="item-title">Behavior coach</h3><p class="item-copy">Nudges, safe chat responses, and achievement awards</p></div>${pill(state.plan === "Free" ? "Locked" : "Ready", state.plan === "Free" ? "warn" : "")}</div>
+            <div class="list-item"><div class="rank">09</div><div class="item-main"><h3 class="item-title">Challenges</h3><p class="item-copy">Monthly Inferno, leaderboard, score, and reward flow</p></div>${pill(state.joinedChallenge ? "Joined" : "Open", state.joinedChallenge ? "" : "warn")}</div>
+            <div class="list-item"><div class="rank">10</div><div class="item-main"><h3 class="item-title">Marketplace</h3><p class="item-copy">Supplier products, referral links, and macro meal logging</p></div>${pill("Open")}</div>
+            <div class="list-item"><div class="rank">11</div><div class="item-main"><h3 class="item-title">Wearables</h3><p class="item-copy">Connection, sync, daily burn, and net-calorie comparison</p></div>${pill(state.wearableConnected ? "Synced" : "Connect", state.wearableConnected ? "" : "warn")}</div>
+            <div class="list-item"><div class="rank">12</div><div class="item-main"><h3 class="item-title">External API</h3><p class="item-copy">Scoped API keys, partner reads, webhooks, and sync intake</p></div>${pill(state.apiEnabled ? "Enabled" : "Off", state.apiEnabled ? "" : "warn")}</div>
+          </div>
+          <div class="quick-row" style="margin-top:14px">
+            <button class="action-button" type="button" data-action="phase-status">View stack</button>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">Contact</h2>
+          <div class="list">
+            ${locations.map((location) => `<div class="list-item"><div class="rank">${location.short}</div><div class="item-main"><h3 class="item-title">${location.name}</h3><p class="item-copy">${location.address}</p><p class="item-copy">${location.phone}</p></div>${pill("Open")}</div>`).join("")}
+            <div class="list-item"><div class="rank">@</div><div class="item-main"><h3 class="item-title">Email</h3><p class="item-copy">burnzone.in@gmail.com</p></div>${pill("Contact")}</div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2 class="section-title">BurnZone picks</h2>
+          <div class="media-scroller">
+            <article class="media-card">
+              <img src="${images.product}" alt="Protein product" loading="lazy">
+              <div class="media-content">
+                <h3 class="media-title">Recovery whey</h3>
+                <p class="item-copy">24g protein - external checkout - referral tracked</p>
+                <button class="action-button" type="button" data-action="marketplace">Open</button>
+              </div>
+            </article>
+            <article class="media-card">
+              <img src="${images.meal}" alt="Prepared meal" loading="lazy">
+              <div class="media-content">
+                <h3 class="media-title">Transformation meal</h3>
+                <p class="item-copy">620 kcal - 46g protein - log to Eat</p>
+                <button class="action-button" type="button" data-action="market-meal">Log meal</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      `;
+    }
+
+    function settingsRow(title, copy, actionLabel, action) {
+      return `
+        <div class="settings-row">
+          <div class="item-main">
+            <strong>${title}</strong>
+            <span>${copy}</span>
+          </div>
+          <button class="ghost-button" type="button" data-action="${action}">${actionLabel}</button>
+        </div>
+      `;
+    }
+
+    function viewBuddy() {
+      return `
+        <div class="chat">
+          ${state.chat.map((message) => `<div class="bubble ${message.from === "me" ? "me" : ""}">${message.text}</div>`).join("")}
+        </div>
+        <div class="chat-composer">
+          <input id="buddyInput" aria-label="Message" placeholder="Message Buddy">
+          <button class="action-button" type="button" data-action="send-chat">Send</button>
+        </div>
+      `;
+    }
+
+    function openSheet(title, body) {
+      document.getElementById("sheetTitle").textContent = title;
+      document.getElementById("sheetBody").innerHTML = body;
+      document.getElementById("sheet").classList.add("open");
+      bindSheet();
+    }
+
+    function closeSheet() {
+      document.getElementById("sheet").classList.remove("open");
+    }
+
+    function bindScreen() {
+      document.querySelectorAll("[data-tab-jump]").forEach((button) => {
+        button.addEventListener("click", () => setTab(button.dataset.tabJump));
+      });
+
+      document.querySelectorAll("[data-action]").forEach((button) => {
+        button.addEventListener("click", () => handleAction(button));
+      });
+    }
+
+    function bindSheet() {
+      document.querySelectorAll("#sheet [data-action]").forEach((button) => {
+        button.addEventListener("click", () => handleAction(button));
+      });
+    }
+
+    function handleAction(element) {
+      const action = element.dataset.action;
+      if (action === "close-sheet") closeSheet();
+      if (action === "oauth-login") startOAuth(element.dataset.provider);
+      if (action === "demo-login") demoLogin();
+      if (action === "sign-out") signOut();
+      if (action === "open-buddy") openSheet("BurnZone Buddy", viewBuddy());
+      if (action === "quick-meal") addMeal(element.dataset.name || "Meal", Number(element.dataset.calories || 450), Number(element.dataset.protein || 24), "manual");
+      if (action === "scan-food") scanFood();
+      if (action === "market-meal") addMeal("Lean chicken bowl", 620, 46, "marketplace");
+      if (action === "remove-meal") removeMeal(Number(element.dataset.index));
+      if (action === "toggle-workout") toggleWorkout(Number(element.dataset.id));
+      if (action === "select-date") selectDate(Number(element.dataset.index));
+      if (action === "book-slot") bookSlot(element.dataset.id);
+      if (action === "set-branch") setBranch(element.dataset.branch);
+      if (action === "switch-branch") openBranchSheet();
+      if (action === "join-challenge") joinChallenge();
+      if (action === "upgrade") upgradePlan();
+      if (action === "toggle-wearable") toggleWearable();
+      if (action === "toggle-api") toggleApi();
+      if (action === "marketplace") marketplaceSheet();
+      if (action === "free-class") freeClassSheet();
+      if (action === "tenant-settings") tenantSettingsSheet();
+      if (action === "phase-status") phaseStatusSheet();
+      if (action === "export-data") exportData();
+      if (action === "playlist") playlistSheet();
+      if (action === "details") detailsSheet(element.dataset.title || "Details");
+      if (action === "send-chat") sendChat();
+    }
+
+    async function startOAuth(provider) {
+      const label = providerLabel(provider);
+      state.authNotice = null;
+      saveState();
+      openSheet(`Continue with ${label}`, `
+        <p class="sheet-copy">Checking ${label} sign-in for this BurnZone tenant.</p>
+      `);
+
+      try {
+        const providersResponse = await fetch(apiPath("/api/v1/auth/oauth/providers"));
+        if (!providersResponse.ok) throw new Error("Provider discovery failed");
+        const providerConfig = await providersResponse.json();
+        const selected = providerConfig.providers && providerConfig.providers[provider];
+
+        if (!selected) {
+          openSheet(`${label} unavailable`, `
+            <p class="sheet-copy">${label} login is not enabled for this tenant yet.</p>
+            <button class="action-button" type="button" data-action="demo-login">Preview app</button>
+          `);
+          return;
+        }
+
+        if (!selected.configured) {
+          openSheet(`${label} setup needed`, `
+            <p class="sheet-copy">${label} login is wired into the app, but this local server still needs the ${provider === "facebook" ? "FACEBOOK_APP_ID and FACEBOOK_APP_SECRET" : "GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"} environment variables.</p>
+            <div class="quick-row">
+              <button class="action-button" type="button" data-action="demo-login">Preview app</button>
+              <button class="ghost-button" type="button" data-action="close-sheet">Close</button>
+            </div>
+          `);
+          return;
+        }
+
+        const oauthResponse = await fetch(apiPath(selected.endpoint));
+        if (!oauthResponse.ok) throw new Error("OAuth initiation failed");
+        const oauth = await oauthResponse.json();
+
+        if (!oauth.redirectUrl) {
+          throw new Error("Missing redirect URL");
+        }
+
+        window.location.assign(oauth.redirectUrl);
+      } catch (error) {
+        openSheet(`${label} could not start`, `
+          <p class="sheet-copy">The sign-in service is not reachable from this build. You can still preview the mobile experience locally.</p>
+          <div class="quick-row">
+            <button class="action-button" type="button" data-action="demo-login">Preview app</button>
+            <button class="ghost-button" type="button" data-action="close-sheet">Close</button>
+          </div>
+        `);
+      }
+    }
+
+    function demoLogin() {
+      state.authenticated = true;
+      state.authProvider = "demo";
+      state.authName = "Demo member";
+      state.authNotice = null;
+      saveState();
+      closeSheet();
+      render();
+      document.getElementById("screen").scrollTop = 0;
+    }
+
+    function signOut() {
+      state.authenticated = false;
+      state.authProvider = null;
+      state.authName = null;
+      state.authNotice = null;
+      saveState();
+      closeSheet();
+      render();
+    }
+
+    function addMeal(name, calories, protein, source) {
+      state.meals.push({ type: source === "marketplace" ? "Marketplace" : "Snack", name, calories, source });
+      state.calories += calories;
+      state.protein += protein;
+      state.streak = Math.max(state.streak, 1);
+      saveState();
+      closeSheet();
+      render();
+    }
+
+    function removeMeal(index) {
+      const meal = state.meals[index];
+      if (!meal) return;
+      state.calories = Math.max(0, state.calories - meal.calories);
+      state.meals.splice(index, 1);
+      saveState();
+      render();
+    }
+
+    function scanFood() {
+      if (state.plan === "Free") {
+        openSheet("Photo scan locked", `
+          <p class="sheet-copy">AI photo estimation, confidence review, and manual item correction are available on Pro.</p>
+          <button class="action-button" type="button" data-action="upgrade">Upgrade</button>
+        `);
+        return;
+      }
+
+      state.photoCredits = Math.max(0, state.photoCredits - 1);
+      addMeal("BurnZone photo estimate", 540, 35, "ai_photo");
+    }
+
+    function toggleWorkout(id) {
+      const index = state.workoutsDone.indexOf(id);
+      if (index >= 0) {
+        state.workoutsDone.splice(index, 1);
+        state.burn = Math.max(0, state.burn - 160);
+      } else {
+        state.workoutsDone.push(id);
+        state.burn += 160;
+      }
+      saveState();
+      render();
+    }
+
+    function selectDate(index) {
+      state.selectedDate = index;
+      saveState();
+      render();
+    }
+
+    function bookSlot(id) {
+      state.bookedSlot = state.bookedSlot === id ? null : id;
+      saveState();
+      render();
+    }
+
+    function setBranch(branch) {
+      state.branch = branch;
+      saveState();
+      closeSheet();
+      render();
+    }
+
+    function openBranchSheet() {
+      openSheet("Branch access", `
+        <p class="sheet-copy">Current branch: ${currentLocation().name}</p>
+        <div class="list">
+          ${locations.map((branch) => `
+            <button class="settings-row" type="button" data-action="set-branch" data-branch="${branch.name}">
+              <div class="item-main"><strong>${branch.name}</strong><span>${branch.address}<br>${branch.phone}</span></div>
+              ${branch.name === state.branch ? pill("Active") : pill("Switch", "warn")}
+            </button>
+          `).join("")}
+        </div>
+      `);
+    }
+
+    function joinChallenge() {
+      if (state.joinedChallenge) {
+        openSheet("Share card", `<p class="sheet-copy">May Inferno badge ready with tenant branding and your current score.</p><button class="action-button" type="button" data-action="close-sheet">Done</button>`);
+        return;
+      }
+      state.joinedChallenge = true;
+      saveState();
+      render();
+    }
+
+    function upgradePlan() {
+      state.plan = state.plan === "Free" ? "Pro" : state.plan;
+      state.photoCredits = Math.max(state.photoCredits, 20);
+      saveState();
+      closeSheet();
+      render();
+    }
+
+    function toggleWearable() {
+      if (state.plan === "Free" && !state.wearableConnected) {
+        openSheet("Wearables need Pro", `<p class="sheet-copy">Sync gates follow the subscription feature matrix.</p><button class="action-button" type="button" data-action="upgrade">Upgrade</button>`);
+        return;
+      }
+      state.wearableConnected = !state.wearableConnected;
+      saveState();
+      render();
+    }
+
+    function toggleApi() {
+      if (state.plan === "Free" && !state.apiEnabled) {
+        openSheet("External API needs Pro", `<p class="sheet-copy">Partner API keys, scoped external reads, webhooks, and inbound sync are Pro controls.</p><button class="action-button" type="button" data-action="upgrade">Upgrade</button>`);
+        return;
+      }
+      state.apiEnabled = !state.apiEnabled;
+      saveState();
+      render();
+    }
+
+    function marketplaceSheet() {
+      openSheet("Marketplace", `
+        <p class="sheet-copy">BurnZone picks can be tracked with referral attribution. Cloud kitchen meals can be logged into nutrition.</p>
+        <div class="quick-row">
+          <button class="action-button" type="button" data-action="market-meal">Log bowl</button>
+          <button class="ghost-button" type="button" data-action="close-sheet">Close</button>
+        </div>
+      `);
+    }
+
+    function freeClassSheet() {
+      const location = currentLocation();
+      openSheet("Book FREE Class", `
+        <p class="sheet-copy">Your request is routed to ${location.name}. Call ${location.phone} or leave details in the web lead form on burnzone.in.</p>
+        <div class="quick-row">
+          <a class="action-button" href="tel:${location.phone.replace(/\s/g, "")}" style="text-decoration:none">Call now</a>
+          <button class="ghost-button" type="button" data-action="close-sheet">Done</button>
+        </div>
+      `);
+    }
+
+    function tenantSettingsSheet() {
+      openSheet("Tenant controls", `
+        <p class="sheet-copy">Branding, plan limits, branch settings, cancellation policy, and feature overrides are admin-scoped.</p>
+        <div class="list">
+          <div class="list-item"><div class="rank">01</div><div class="item-main"><h3 class="item-title">App name</h3><p class="item-copy">${state.tenant}</p></div>${pill("Live")}</div>
+          <div class="list-item"><div class="rank">02</div><div class="item-main"><h3 class="item-title">Feature check</h3><p class="item-copy">Subscription, tenant override, usage limit</p></div>${pill("20ms", "warn")}</div>
+        </div>
+      `);
+    }
+
+    function phaseStatusSheet() {
+      openSheet("Phase engine", `
+        <p class="sheet-copy">The mobile shell is mapped to the backend surfaces for Phase 6 through Phase 12. Third-party systems run in demo-safe mode until payment, AI, wearable, and partner credentials are added.</p>
+        <div class="list">
+          <div class="list-item"><div class="rank">API</div><div class="item-main"><h3 class="item-title">Discovery</h3><p class="item-copy">/api/v1 lists every core route and integration surface</p></div>${pill("Ready")}</div>
+          <div class="list-item"><div class="rank">Gate</div><div class="item-main"><h3 class="item-title">Feature enforcement</h3><p class="item-copy">Subscription tier, tenant override, SaaS plan, and quota resolve server-side</p></div>${pill("Live")}</div>
+          <div class="list-item"><div class="rank">Data</div><div class="item-main"><h3 class="item-title">Tenant scoped</h3><p class="item-copy">Every new phase stores tenant and user context for isolation</p></div>${pill("Scoped")}</div>
+        </div>
+      `);
+    }
+
+    function exportData() {
+      openSheet("Data export", `
+        <p class="sheet-copy">Nutrition, goals, weight logs, bookings, and consent-scoped profile data are ready for export.</p>
+        <button class="action-button" type="button" data-action="close-sheet">Done</button>
+      `);
+    }
+
+    function playlistSheet() {
+      openSheet("New playlist", `
+        <p class="sheet-copy">Draft playlists stay editable until submitted for branch admin approval.</p>
+        <button class="action-button" type="button" data-action="close-sheet">Create draft</button>
+      `);
+    }
+
+    function detailsSheet(title) {
+      openSheet(title, `
+        <p class="sheet-copy">Tenant-scoped content, RBAC visibility, audit logging, and feature enforcement are reflected in this flow.</p>
+        <button class="action-button" type="button" data-action="close-sheet">Done</button>
+      `);
+    }
+
+    function sendChat() {
+      const input = document.getElementById("buddyInput");
+      const text = input && input.value.trim();
+      if (!text) return;
+      state.chat.push({ from: "me", text });
+      state.chat.push({ from: "buddy", text: "Logged. I will keep it practical and safe for your current goal." });
+      saveState();
+      openSheet("BurnZone Buddy", viewBuddy());
+    }
+
+    document.querySelectorAll(".tab-button").forEach((button) => {
+      button.addEventListener("click", () => setTab(button.dataset.tab));
+    });
+
+    document.querySelectorAll(".header [data-action]").forEach((button) => {
+      button.addEventListener("click", () => handleAction(button));
+    });
+
+    document.getElementById("sheet").addEventListener("click", (event) => {
+      if (event.target.id === "sheet") closeSheet();
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
